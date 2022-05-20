@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ojy.bodhi_pavilion.mapper.OrderDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.ojy.bodhi_pavilion.pojo.OrderDetail" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="order_id" property="orderId" jdbcType="BIGINT" />
+    <result column="dish_id" property="dishId" jdbcType="BIGINT" />
+    <result column="setmeal_id" property="setmealId" jdbcType="BIGINT" />
+    <result column="dish_flavor" property="dishFlavor" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="tbFieldList" >
+    id, name, image, order_id, dish_id, setmeal_id, dish_flavor, number, amount
+  </sql>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="tbFieldList" />
+    from order_detail
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectOrderDetailByOrderId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="tbFieldList" />
+    from order_detail
+    where order_id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from order_detail
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.OrderDetail" >
+    insert into order_detail (id, name, image, 
+      order_id, dish_id, setmeal_id, 
+      dish_flavor, number, amount
+      )
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
+      #{orderId,jdbcType=BIGINT}, #{dishId,jdbcType=BIGINT}, #{setmealId,jdbcType=BIGINT}, 
+      #{dishFlavor,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}
+      )
+  </insert>
+  <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.OrderDetail" >
+    update order_detail
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="orderId != null" >
+        order_id = #{orderId,jdbcType=BIGINT},
+      </if>
+      <if test="dishId != null" >
+        dish_id = #{dishId,jdbcType=BIGINT},
+      </if>
+      <if test="setmealId != null" >
+        setmeal_id = #{setmealId,jdbcType=BIGINT},
+      </if>
+      <if test="dishFlavor != null" >
+        dish_flavor = #{dishFlavor,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

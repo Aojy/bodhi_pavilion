@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ojy.bodhi_pavilion.mapper.ShoppingCartMapper" >
+  <resultMap id="BaseResultMap" type="com.ojy.bodhi_pavilion.pojo.ShoppingCart" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="image" property="image" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="dish_id" property="dishId" jdbcType="BIGINT" />
+    <result column="setmeal_id" property="setmealId" jdbcType="BIGINT" />
+    <result column="dish_flavor" property="dishFlavor" jdbcType="VARCHAR" />
+    <result column="number" property="number" jdbcType="INTEGER" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="tbFieldList" >
+    id, name, image, user_id, dish_id, setmeal_id, dish_flavor, number, amount, create_time
+  </sql>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="tbFieldList" />
+    from shopping_cart
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectShoppingCartByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="tbFieldList" />
+    from shopping_cart
+    where user_id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectShoppingCartByDishId" resultType="Integer" parameterType="com.ojy.bodhi_pavilion.pojo.ShoppingCart">
+    select number
+    from shopping_cart
+    where user_id = #{userId} and dish_id = #{dishId}
+  </select>
+  
+  <delete id="deleteByUserId" parameterType="java.lang.String" >
+    delete from shopping_cart
+    where user_id = #{id,jdbcType=BIGINT}
+  </delete>
+
+  <delete id="deleteCart" parameterType="com.ojy.bodhi_pavilion.pojo.ShoppingCart" >
+    delete from shopping_cart
+    where user_id = #{userId} and dish_id = #{dishId}
+  </delete>
+
+
+  <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.ShoppingCart" >
+    insert into shopping_cart (id, name, image, 
+      user_id, dish_id, setmeal_id, 
+      dish_flavor, number, amount, 
+      create_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{dishId,jdbcType=BIGINT}, #{setmealId,jdbcType=BIGINT}, 
+      #{dishFlavor,jdbcType=VARCHAR}, #{number,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, 
+      #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.ShoppingCart" >
+    update shopping_cart
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null" >
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="setmealId != null" >
+        setmeal_id = #{setmealId,jdbcType=BIGINT},
+      </if>
+      <if test="dishFlavor != null" >
+        dish_flavor = #{dishFlavor,jdbcType=VARCHAR},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=INTEGER},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where user_id = #{userId} and dish_id = #{dishId}
+  </update>
+</mapper>

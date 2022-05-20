@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ojy.bodhi_pavilion.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.ojy.bodhi_pavilion.pojo.User" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="phone" property="phone" />
+    <result column="sex" property="sex" />
+    <result column="id_number" property="idNumber" />
+    <result column="avatar" property="avatar" />
+    <result column="status" property="status" />
+  </resultMap>
+  <sql id="tbFieldList" >
+    id, name, phone, sex, id_number, avatar, status
+  </sql>
+  <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="tbFieldList" />
+    from user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectUserByPhone" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="tbFieldList" />
+    from user
+    where phone = #{phone}
+  </select>
+  
+  <delete id="deleteById" parameterType="java.lang.String" >
+    delete from user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.User" >
+    insert into user (id, name, phone, sex, id_number, avatar, status)
+    values (#{id}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{status})
+  </insert>
+  <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.User" >
+    update user
+    <set >
+      <if test="name != null" >
+        name = #{name},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex},
+      </if>
+      <if test="idNumber != null" >
+        id_number = #{idNumber},
+      </if>
+      <if test="avatar != null" >
+        avatar = #{avatar},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

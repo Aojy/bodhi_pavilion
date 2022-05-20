@@ -1,0 +1,106 @@
+package com.ojy.bodhi_pavilion.pojo;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+public class Orders {
+    private String id;
+
+    private String number;
+
+    private Integer status;
+
+    private String userId;
+
+    private String addressBookId;
+
+    private Date orderTime;
+
+    private Date checkoutTime;
+
+    private Integer payMethod;
+
+    private BigDecimal amount;
+
+    private String remark;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getAddressBookId() {
+        return addressBookId;
+    }
+
+    public void setAddressBookId(String addressBookId) {
+        this.addressBookId = addressBookId;
+    }
+
+    public Date getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(Date orderTime) {
+        this.orderTime = orderTime;
+    }
+
+    public Date getCheckoutTime() {
+        return checkoutTime;
+    }
+
+    public void setCheckoutTime(Date checkoutTime) {
+        this.checkoutTime = checkoutTime;
+    }
+
+    public Integer getPayMethod() {
+        return payMethod;
+    }
+
+    public void setPayMethod(Integer payMethod) {
+        this.payMethod = payMethod;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+}
