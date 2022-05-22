@@ -1,6 +1,7 @@
 package com.ojy.bodhi_pavilion.controller;
 
 import com.ojy.bodhi_pavilion.pojo.Employee;
+import com.ojy.bodhi_pavilion.pojo.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,7 +20,11 @@ public class WelcomeController {
     }
 
     @RequestMapping("/user")
-    public String front() {
+    public String front(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            return "redirect:/front/index.html";
+        }
         return "redirect:/front/page/login.html";
     }
 

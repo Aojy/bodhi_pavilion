@@ -13,5 +13,5 @@ public interface CategoryService {
 
     boolean deleteCategoryByIds(String ids);
 
-    List<Category> queryCategoryByType(Integer type, Integer page, Integer pageSize);
+    List<Category> queryCategoryByType(Map<String, Object> map);
 }

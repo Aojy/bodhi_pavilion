@@ -17,8 +17,8 @@
     <result column="create_user" property="createUser" jdbcType="BIGINT" />
     <result column="update_user" property="updateUser" jdbcType="BIGINT" />
     <result column="is_deleted" property="isDeleted" jdbcType="INTEGER" />
-    <association property="flavors" column="id" select="com.ojy.bodhi_pavilion.mapper.DishFlavorMapper.selectDishFlavor">
-    </association>
+    <association property="flavors" column="id"
+                 select="com.ojy.bodhi_pavilion.mapper.DishFlavorMapper.selectDishFlavor"/>
   </resultMap>
   <sql id="tbFieldList" >
     id, name, category_id, price, code, image, description, status, sort, create_time, 
@@ -29,9 +29,10 @@
     select 
     <include refid="tbFieldList" />
     from dish
-    where id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    where id = #{id} and is_deleted = 0
   </select>
 
+  
   <select id="selectDishList" resultMap="ResultMap" parameterType="map">
     select d.id, d.name, d.category_id, d.price, d.code, d.image, d.description,
            d.status, d.sort, d.create_time, d.update_time, d.create_user, d.update_user,
@@ -46,6 +47,7 @@
     limit #{start}, #{size}
   </select>
 
+  
   <select id="selectTotalByCondition" parameterType="String" resultType="int">
     select count(id)
     from dish
@@ -69,6 +71,7 @@
     </if>
   </select>
   
+  
   <update id="deleteByIds" parameterType="java.lang.String" >
     update dish
     set is_deleted = 1
@@ -77,74 +80,57 @@
       #{id}
     </foreach>
   </update>
+  
+  
   <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.Dish" >
-    insert into dish (id, name, category_id, 
-      price, code, image, 
-      description, status, sort, 
-      create_time, update_time, create_user, 
-      update_user, is_deleted)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{categoryId,jdbcType=BIGINT}, 
-      #{price,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, 
-      #{updateUser,jdbcType=BIGINT}, #{isDeleted,jdbcType=INTEGER})
+    insert into dish (id, name, category_id, price, code, image, description, status, sort,
+      create_time, update_time, create_user, update_user, is_deleted)
+    values (#{id}, #{name}, #{categoryId}, #{price}, #{code}, #{image}, #{description}, #{status},
+            #{sort}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}, #{isDeleted})
   </insert>
+  
+  
   <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.Dish" >
     update dish
     <set >
       <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+        name = #{name},
       </if>
       <if test="categoryId != null" >
-        category_id = #{categoryId,jdbcType=BIGINT},
+        category_id = #{categoryId},
       </if>
       <if test="price != null" >
-        price = #{price,jdbcType=DECIMAL},
+        price = #{price},
       </if>
       <if test="code != null" >
-        code = #{code,jdbcType=VARCHAR},
+        code = #{code},
       </if>
       <if test="image != null" >
-        image = #{image,jdbcType=VARCHAR},
+        image = #{image},
       </if>
       <if test="description != null" >
-        description = #{description,jdbcType=VARCHAR},
+        description = #{description},
       </if>
       <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
+        status = #{status},
       </if>
       <if test="sort != null" >
-        sort = #{sort,jdbcType=INTEGER},
+        sort = #{sort},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime},
       </if>
       <if test="updateUser != null" >
-        update_user = #{updateUser,jdbcType=BIGINT},
+        update_user = #{updateUser},
       </if>
       <if test="isDeleted != null" >
-        is_deleted = #{isDeleted,jdbcType=INTEGER},
+        is_deleted = #{isDeleted}
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </update>
-  <update id="updateById" parameterType="com.ojy.bodhi_pavilion.pojo.Dish" >
-    update dish
-    set name = #{name,jdbcType=VARCHAR},
-      category_id = #{categoryId,jdbcType=BIGINT},
-      price = #{price,jdbcType=DECIMAL},
-      code = #{code,jdbcType=VARCHAR},
-      image = #{image,jdbcType=VARCHAR},
-      description = #{description,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER},
-      sort = #{sort,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=BIGINT},
-      update_user = #{updateUser,jdbcType=BIGINT},
-      is_deleted = #{isDeleted,jdbcType=INTEGER}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+  
+  
   <update id="updateDishes" parameterType="map">
     update dish
     set status = #{code}

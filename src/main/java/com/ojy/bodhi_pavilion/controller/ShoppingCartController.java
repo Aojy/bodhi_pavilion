@@ -3,8 +3,8 @@ package com.ojy.bodhi_pavilion.controller;
 import com.ojy.bodhi_pavilion.pojo.ShoppingCart;
 import com.ojy.bodhi_pavilion.pojo.User;
 import com.ojy.bodhi_pavilion.service.ShoppingCartService;
-import com.ojy.bodhi_pavilion.uitl.GetId;
-import com.ojy.bodhi_pavilion.uitl.Result;
+import com.ojy.bodhi_pavilion.util.GetId;
+import com.ojy.bodhi_pavilion.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +18,11 @@ public class ShoppingCartController {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
+    /**
+     * 查询对应用户的购物车商品列表
+     * @param session
+     * @return
+     */
     @GetMapping("/list")
     public Result list(HttpSession session) {
         try {
@@ -29,6 +34,12 @@ public class ShoppingCartController {
         }
     }
 
+    /**
+     * 添加对应用户的购物车商品
+     * @param cart
+     * @param session
+     * @return
+     */
     @PostMapping("/add")
     public Result add(@RequestBody ShoppingCart cart, HttpSession session) {
         try {
@@ -45,6 +56,12 @@ public class ShoppingCartController {
         }
     }
 
+    /**
+     * 减少对应用户的购物车商品
+     * @param cart
+     * @param session
+     * @return
+     */
     @PostMapping("/sub")
     public Result sub(@RequestBody ShoppingCart cart, HttpSession session) {
         try {
@@ -57,6 +74,11 @@ public class ShoppingCartController {
         }
     }
 
+    /**
+     * 清空购物车
+     * @param session
+     * @return
+     */
     @DeleteMapping("clean")
     public Result cleanCart(HttpSession session) {
         try {

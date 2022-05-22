@@ -10,9 +10,9 @@ public interface EmployeeService {
 
     Employee login(String username, String password);
 
-    Map<String, Object> queryEmployeeList(Integer pageNo, Integer pageSize, String name);
+    Map<String, Object> queryEmployeeList(Map<String, Object> map);
 
     boolean saveEmployee(Employee employee);
 
-    boolean updateEmployee(Employee employee);
+    boolean updateEmployee(Employee updateEmployee, Employee emp);
 }

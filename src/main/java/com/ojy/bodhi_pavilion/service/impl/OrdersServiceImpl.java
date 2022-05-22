@@ -7,14 +7,16 @@ import com.ojy.bodhi_pavilion.mapper.ShoppingCartMapper;
 import com.ojy.bodhi_pavilion.pojo.OrderDetail;
 import com.ojy.bodhi_pavilion.pojo.Orders;
 import com.ojy.bodhi_pavilion.pojo.ShoppingCart;
-import com.ojy.bodhi_pavilion.pojo.User;
 import com.ojy.bodhi_pavilion.service.OrdersService;
-import com.ojy.bodhi_pavilion.uitl.GetId;
+import com.ojy.bodhi_pavilion.util.GetId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -31,10 +33,16 @@ public class OrdersServiceImpl implements OrdersService {
     @Autowired
     private OrderDetailMapper orderDetailMapper;
 
+    /**
+     * 提交订单
+     * @param orders
+     * @return
+     */
     @Override
     public boolean submitOrderFrom(Orders orders) {
         List<ShoppingCart> cartList = scMapper.selectShoppingCartByUserId(orders.getUserId());
-        BigDecimal amount = new BigDecimal(0);
+        BigDecimal amount = new BigDecimal(6);
+        // 遍历购物车的商品
         for (ShoppingCart cart : cartList) {
             amount = amount.add(cart.getAmount().multiply(new BigDecimal(cart.getNumber())));
             OrderDetail od = new OrderDetail();
@@ -53,6 +61,11 @@ public class OrdersServiceImpl implements OrdersService {
         return ordersMapper.insert(orders) > 0 && scMapper.deleteByUserId(orders.getUserId()) > 0;
     }
 
+    /**
+     * 分页查询对应用户的订单
+     * @param map
+     * @return
+     */
     @Override
     public Map<String, Object> queryUserPage(Map<String, Object> map) {
         List<OrdersDto> list = ordersMapper.selectOrdersByUserId(map);
@@ -64,6 +77,11 @@ public class OrdersServiceImpl implements OrdersService {
         return map;
     }
 
+    /**
+     * 查询所有订单数据
+     * @param map
+     * @return
+     */
     @Override
     public Map<String, Object> queryOrdersList(Map<String, Object> map) {
         List<OrdersDto> list = ordersMapper.selectOrdersList(map);
@@ -72,5 +90,43 @@ public class OrdersServiceImpl implements OrdersService {
         map.put("records", list);
         map.put("total", total);
         return map;
+    }
+
+    /**
+     * 修改订单状态
+     * @param orders
+     * @return
+     */
+    @Override
+    public boolean updateOrder(Orders orders) {
+        Date date = orders.getCheckoutTime();
+        if (date != null) {
+            orders.setCheckoutTime(new Date(date.getTime() + 1000 * 60 * 60 * 12));
+        }
+        return ordersMapper.updateByIdSelective(orders) > 0;
+    }
+
+    /**
+     * 再来一单
+     * @param orders
+     * @return
+     */
+    @Override
+    public boolean submitOrderAgain(Orders orders) {
+        OrdersDto ordersDto = ordersMapper.selectById(orders.getId());
+        if (ordersDto.getOrderDetails() == null){
+            return false;
+        }
+        ordersDto.setId(GetId.getId());
+        ordersDto.setNumber(GetId.getId());
+        ordersDto.setOrderTime(new Date());
+        ordersDto.setCheckoutTime(new Date());
+        ordersDto.setStatus(2);
+        for (OrderDetail od : ordersDto.getOrderDetails()) {
+            od.setId(GetId.getId());
+            od.setOrderId(ordersDto.getId());
+            orderDetailMapper.insert(od);
+        }
+        return ordersMapper.insert(ordersDto) > 0;
     }
 }

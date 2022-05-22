@@ -12,10 +12,26 @@
         <link rel="stylesheet" href="../../backend/plugins/element-ui/index.css" />
         <!--引入vant样式-->
         <link rel="stylesheet" href="../styles/vant.min.css"/>
+        <link rel="stylesheet" href="../styles/main.css"/>
         <!-- 引入样式  -->
         <link rel="stylesheet" href="../styles/index.css" />
         <!--本页面内容的样式-->
         <link rel="stylesheet" href="./../styles/add-order.css" />
+        <style>
+            #payDiv > li > img,span{
+                vertical-align: top;
+            }
+            #payDiv > li > span{
+                width: 50%;
+            }
+            .btnBottom > span{
+                display:block;
+                vertical-align: bottom;
+                font-size: 15px;
+                color: #9d9d9d;
+                border-radius: 20px;
+            }
+        </style>
     </head>
     <body>
         <div id="add_order" class="app">
@@ -71,7 +87,7 @@
                     />
                 </div>
             </div>
-            <div class="divCart">
+            <div class="divCart" v-show="!payDialogShow.show">
                 <div :class="{imgCartActive: cartData && cartData.length > 0, imgCart:!cartData || cartData.length<1}"></div>
                 <div :class="{divGoodsNum:1===1, moreGoods:cartData && cartData.length > 99}" v-if="cartData && cartData.length > 0">{{ goodsNum }}</div>
                 <div class="divNum">
@@ -79,8 +95,55 @@
                     <span>{{goodsPrice}}</span>
                 </div>
                 <div class="divPrice"></div>
-                <div :class="{btnSubmitActive: cartData && cartData.length > 0, btnSubmit:!cartData || cartData.length<1}" @click="goToPaySuccess">去支付</div>
+                <div :class="{btnSubmitActive: cartData && cartData.length > 0, btnSubmit:!cartData || cartData.length<1}" @click="payDialogShowBtn">去支付</div>
               </div>
+
+            <div id="main">
+                <van-dialog v-model="payDialogShow.show" :style="{ height: '35%' , width: '80%'}" :show-confirm-button="false" class="dialogFlavor" ref="flavorDialog">
+                    <div class="dialogTitle"> 付款 </div>
+                    <div class="divContent" :style="{ height: '50%' }" style="text-align: center">
+                        <ul id="payDiv">
+                            <li>
+                                &nbsp;
+                            </li>
+                            <li>
+                                <img src="./../images/zfb.jpeg" width="33px" @click="payClick(0)">
+                                <span :key="0" @click="payClick(0)" :class="{spanActive:payDialogShow.payMethod === 0}">
+                                    微&nbsp;&nbsp;&nbsp;信
+                                </span>
+                            </li>
+                            <li>
+                                <img src="./../images/wx.jpeg" width="33px" @click="payClick(1)">
+                                <span :key="1" @click="payClick(1)" :class="{spanActive:payDialogShow.payMethod === 1}">
+                                    支付宝
+                                </span>
+                            </li>
+                            <li>
+                                &nbsp;
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btnBottom" style="position:fixed;text-align: right; right: 10px; bottom: 10px;">
+                        <span style="position:fixed;left: 15px;bottom:20px;color: #e94e3c;
+                               text-align: center; font-size: 35px">
+                            <span style="vertical-align: super; font-size: 15px">￥</span>
+                            {{goodsPrice}}
+                        </span>
+                        <span @click="goToLaterPay" style="position:fixed;right: 100px;
+                               bottom: 10px">稍后付款
+                        </span>
+                        &nbsp;
+                        <span @click="goToPaySuccess"
+                              style="width: 80px;background: #fdc001; border-radius: 30px;
+                               font-size: 20px; color: #505050; text-align: center;">
+                            <b>提交</b>
+                        </span>
+                    </div>
+                    <div class="divFlavorClose" @click="payDialogShow.show = false">
+                        <img src="./../images/close.png"/>
+                    </div>
+                </van-dialog>
+            </div>
         </div>
         <!-- 开发环境版本，包含了有帮助的命令行警告 -->
         <script src="../../backend/plugins/vue/vue.js"></script>
@@ -92,6 +155,7 @@
         <!-- 引入axios -->
         <script src="../../backend/plugins/axios/axios.min.js"></script>
         <script src="./../js/request.js"></script>
+        <script src="./../js/moment.js"></script>
         <script src="./../js/common.js"></script>
         <script src="./../api/main.js"></script>
         <script src="./../api/order.js"></script>
@@ -106,6 +170,10 @@
                             detail:'',//详细地址
                             sex:'1',
                             id:undefined
+                        },
+                        payDialogShow: {
+                            payMethod: 0,
+                            show:false
                         },
                         finishTime:'',//送达时间
                         cartData:[],
@@ -171,6 +239,12 @@
                         }
                         this.finishTime = hour + ':' + minute
                     },
+                    payClick(item){
+                        this.payDialogShow.payMethod = item
+                        //强制刷新dialog的dom
+                        this.payDialogShow.show = false
+                        this.payDialogShow.show = true
+                    },
                     toAddressPage(){
                         window.requestAnimationFrame(()=>{
                             window.location.href = '/front/page/address.html'
@@ -185,10 +259,33 @@
                             this.$notify({ type:'warning', message:res.msg});
                         }
                     },
+                    async goToLaterPay(){
+                        const formatStr = "YYYY-MM-DD HH:mm:ss";
+                        const params = {
+                            remark:this.note,
+                            status: 1,
+                            payMethod:233,
+                            addressBookId:this.address.id,
+                            orderTime: moment().format(formatStr)
+                        }
+                        const res = await addOrderApi(params)
+                        if(res.code === 1){
+                            window.requestAnimationFrame(()=>{
+                                window.location.href = '/front/page/pay-wait.html'
+                            })
+                        }else{
+                            this.$notify({ type:'warning', message:res.msg});
+                        }
+                    },
+                    // 支付弹框显示
+                    async payDialogShowBtn(){
+                        this.payDialogShow.show = true;
+                    },
                     async goToPaySuccess(){
                         const params = {
                             remark:this.note,
-                            payMethod:1,
+                            status: 2,
+                            payMethod:this.payDialogShow.payMethod,
                             addressBookId:this.address.id
                         }
                         const res = await addOrderApi(params)

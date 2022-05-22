@@ -3,8 +3,8 @@ package com.ojy.bodhi_pavilion.controller;
 import com.ojy.bodhi_pavilion.pojo.AddressBook;
 import com.ojy.bodhi_pavilion.pojo.User;
 import com.ojy.bodhi_pavilion.service.AddressBookService;
-import com.ojy.bodhi_pavilion.uitl.GetId;
-import com.ojy.bodhi_pavilion.uitl.Result;
+import com.ojy.bodhi_pavilion.util.GetId;
+import com.ojy.bodhi_pavilion.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,11 @@ public class AddressBookController {
     @Autowired
     private AddressBookService addressBookService;
 
-
+    /**
+     * 查询对应用户的默认地址信息
+     * @param session
+     * @return
+     */
     @GetMapping("/default")
     public Result getDefault(HttpSession session) {
         try {
@@ -30,6 +34,11 @@ public class AddressBookController {
         }
     }
 
+    /**
+     * 查询对应用户的所有地址信息
+     * @param session
+     * @return
+     */
     @GetMapping("/list")
     public Result getAddressBooks(HttpSession session) {
         try {
@@ -41,6 +50,12 @@ public class AddressBookController {
         }
     }
 
+    /**
+     * 保存对应用户的地址信息
+     * @param addressBook
+     * @param session
+     * @return
+     */
     @PostMapping
     public Result saveAddressBook(@RequestBody AddressBook addressBook, HttpSession session) {
         try {
@@ -61,6 +76,12 @@ public class AddressBookController {
         }
     }
 
+    /**
+     * 修改对应用户的默认地址
+     * @param addressBook
+     * @param session
+     * @return
+     */
     @PutMapping("/default")
     public Result updateDefault(@RequestBody AddressBook addressBook, HttpSession session) {
         try {
@@ -73,6 +94,11 @@ public class AddressBookController {
         }
     }
 
+    /**
+     * 查询对应addressId的地址信息
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public Result getAddressBook(@PathVariable String id) {
         try {
@@ -83,6 +109,12 @@ public class AddressBookController {
         }
     }
 
+    /**
+     * 修改对应的地址信息
+     * @param addressBook
+     * @param session
+     * @return
+     */
     @PutMapping
     public Result updateAddressBook(@RequestBody AddressBook addressBook, HttpSession session) {
         try {
@@ -97,6 +129,11 @@ public class AddressBookController {
         }
     }
 
+    /**
+     * 删除对应的地址信息
+     * @param ids
+     * @return
+     */
     @DeleteMapping
     public Result deleteAddressBook(String ids) {
         try {

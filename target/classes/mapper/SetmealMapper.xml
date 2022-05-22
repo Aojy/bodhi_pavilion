@@ -23,6 +23,8 @@
     id, category_id, name, price, status, code, description, image, create_time, update_time, 
     create_user, update_user, is_deleted
   </sql>
+  
+  
   <select id="selectById" resultMap="ResultMap" parameterType="java.lang.String" >
     select 
     <include refid="tbFieldList" />
@@ -30,6 +32,7 @@
     where id = #{id} and is_deleted = 0
   </select>
 
+  
   <select id="selectListByCategoryId" resultMap="ResultMap" parameterType="java.lang.String" >
     select
     <include refid="tbFieldList" />
@@ -37,6 +40,7 @@
     where category_id = #{categoryId} and is_deleted = 0
   </select>
 
+  
   <select id="selectSetmealList" resultMap="ResultMap" parameterType="map">
     select s.id, s. category_id, s. name, s. price, s. status, s. code, s. description, s. image, s.
         create_time, s. update_time, s. create_user, s. update_user, s. is_deleted, c.name as categoryName
@@ -50,6 +54,7 @@
     limit #{start}, #{size}
   </select>
 
+  
   <select id="selectTotalByCondition" parameterType="String" resultType="int">
     select count(id)
     from setmeal
@@ -59,6 +64,7 @@
     </if>
   </select>
 
+  
   <update id="deleteByIds" parameterType="java.lang.String" >
     update setmeal set is_deleted = 1
     where id in
@@ -66,19 +72,22 @@
       #{id}
     </foreach>
   </update>
+  
+  
   <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.Setmeal" >
     insert into setmeal (id, category_id, name, 
       price, status, code, 
       description, image, create_time, 
       update_time, create_user, update_user, 
       is_deleted)
-    values (#{id,jdbcType=BIGINT}, #{categoryId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
-      #{price,jdbcType=DECIMAL}, #{status,jdbcType=INTEGER}, #{code,jdbcType=VARCHAR}, 
-      #{description,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}, 
-      #{isDeleted,jdbcType=INTEGER})
+    values (#{id}, #{categoryId}, #{name}, 
+      #{price}, #{status}, #{code}, 
+      #{description}, #{image}, #{createTime}, 
+      #{updateTime}, #{createUser}, #{updateUser}, 
+      #{isDeleted})
   </insert>
 
+  
   <update id="updateSetmeals" parameterType="com.ojy.bodhi_pavilion.pojo.Setmeal" >
     update setmeal
     set status = #{code}
@@ -87,40 +96,42 @@
       #{id}
     </foreach>
   </update>
+  
+  
   <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.Setmeal" >
     update setmeal
     <set >
-      <if test="categoryId != null" >
-        category_id = #{categoryId,jdbcType=BIGINT},
+      <if test="categoryId != null and categoryId != ''" >
+        category_id = #{categoryId},
       </if>
       <if test="name != null" >
-        name = #{name,jdbcType=VARCHAR},
+        name = #{name},
       </if>
       <if test="price != null" >
-        price = #{price,jdbcType=DECIMAL},
+        price = #{price},
       </if>
       <if test="status != null" >
-        status = #{status,jdbcType=INTEGER},
+        status = #{status},
       </if>
       <if test="code != null" >
-        code = #{code,jdbcType=VARCHAR},
+        code = #{code},
       </if>
       <if test="description != null" >
-        description = #{description,jdbcType=VARCHAR},
+        description = #{description},
       </if>
       <if test="image != null" >
-        image = #{image,jdbcType=VARCHAR},
+        image = #{image},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime},
       </if>
       <if test="updateUser != null" >
-        update_user = #{updateUser,jdbcType=BIGINT},
+        update_user = #{updateUser},
       </if>
       <if test="isDeleted != null" >
-        is_deleted = #{isDeleted,jdbcType=INTEGER},
+        is_deleted = #{isDeleted},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </update>
 </mapper>

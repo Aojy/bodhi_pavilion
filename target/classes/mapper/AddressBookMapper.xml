@@ -27,18 +27,20 @@
     district_code, district_name, detail, label, is_default, create_time, update_time, 
     create_user, update_user, is_deleted
   </sql>
+  
+  
   <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="tbFieldList" />
     from address_book
-    where id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    where id = #{id} and is_deleted = 0
   </select>
 
   <select id="selectAddressBookByUserId" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select
     <include refid="tbFieldList" />
     from address_book
-    where user_id = #{id,jdbcType=BIGINT} and is_deleted = 0
+    where user_id = #{id} and is_deleted = 0
     <if test="flag != null and flag != ''">
       and is_default = 1;
     </if>
@@ -46,75 +48,70 @@
 
   <update id="deleteById" parameterType="java.lang.String" >
     delete address_book set is_deleted = 1
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </update>
+  
   <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.AddressBook" >
-    insert into address_book (id, user_id, consignee, 
-      sex, phone, province_code, 
-      province_name, city_code, city_name, 
-      district_code, district_name, detail, 
-      label, is_default, create_time, 
-      update_time, create_user, update_user, 
-      is_deleted)
-    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{consignee,jdbcType=VARCHAR}, 
-      #{sex,jdbcType=TINYINT}, #{phone,jdbcType=VARCHAR}, #{provinceCode,jdbcType=VARCHAR}, 
-      #{provinceName,jdbcType=VARCHAR}, #{cityCode,jdbcType=VARCHAR}, #{cityName,jdbcType=VARCHAR}, 
-      #{districtCode,jdbcType=VARCHAR}, #{districtName,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}, 
-      #{label,jdbcType=VARCHAR}, #{isDefault,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}, 
-      #{isDeleted,jdbcType=INTEGER})
+    insert into address_book (id, user_id, consignee, sex, phone, province_code, 
+      province_name, city_code, city_name, district_code, district_name, detail, 
+      label, is_default, create_time, update_time, create_user, update_user, is_deleted)
+    values (#{id}, #{userId}, #{consignee}, #{sex}, #{phone}, #{provinceCode}, 
+      #{provinceName}, #{cityCode}, #{cityName}, #{districtCode}, #{districtName}, #{detail}, 
+      #{label}, #{isDefault}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser}, 
+      #{isDeleted})
   </insert>
+  
+  
   <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.AddressBook" >
     update address_book
     <set >
       <if test="consignee != null" >
-        consignee = #{consignee,jdbcType=VARCHAR},
+        consignee = #{consignee},
       </if>
       <if test="sex != null" >
-        sex = #{sex,jdbcType=TINYINT},
+        sex = #{sex},
       </if>
       <if test="phone != null" >
-        phone = #{phone,jdbcType=VARCHAR},
+        phone = #{phone},
       </if>
       <if test="provinceCode != null" >
-        province_code = #{provinceCode,jdbcType=VARCHAR},
+        province_code = #{provinceCode},
       </if>
       <if test="provinceName != null" >
-        province_name = #{provinceName,jdbcType=VARCHAR},
+        province_name = #{provinceName},
       </if>
       <if test="cityCode != null" >
-        city_code = #{cityCode,jdbcType=VARCHAR},
+        city_code = #{cityCode},
       </if>
       <if test="cityName != null" >
-        city_name = #{cityName,jdbcType=VARCHAR},
+        city_name = #{cityName},
       </if>
       <if test="districtCode != null" >
-        district_code = #{districtCode,jdbcType=VARCHAR},
+        district_code = #{districtCode},
       </if>
       <if test="districtName != null" >
-        district_name = #{districtName,jdbcType=VARCHAR},
+        district_name = #{districtName},
       </if>
       <if test="detail != null" >
-        detail = #{detail,jdbcType=VARCHAR},
+        detail = #{detail},
       </if>
       <if test="label != null" >
-        label = #{label,jdbcType=VARCHAR},
+        label = #{label},
       </if>
       <if test="isDefault != null" >
-        is_default = #{isDefault,jdbcType=BIT},
+        is_default = #{isDefault},
       </if>
       <if test="updateTime != null" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime},
       </if>
       <if test="updateUser != null" >
-        update_user = #{updateUser,jdbcType=BIGINT},
-      </if>
-      <if test="isDeleted != null" >
-        is_deleted = #{isDeleted,jdbcType=INTEGER},
+        update_user = #{updateUser},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </update>
+  
+  
   <update id="updateDefaultFalse" parameterType="com.ojy.bodhi_pavilion.pojo.AddressBook" >
     update address_book
     set is_default = 0

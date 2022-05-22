@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SetmealService {
-    Map<String, Object> getSetmealList(Integer page, Integer pageSize, String name);
+    Map<String, Object> getSetmealList(Map<String, Object> map);
 
     Setmeal getSetmeal(String id);
 
@@ -17,7 +17,7 @@ public interface SetmealService {
 
     boolean deleteSetmealByIds(String[] strings);
 
-    boolean updateSetmealStatus(String[] strings, Integer code);
+    boolean updateSetmealStatus(Map<String, Object> map);
 
     List<Setmeal> getList(String categoryId);
 }

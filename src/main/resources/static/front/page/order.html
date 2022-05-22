@@ -16,6 +16,37 @@
         <link rel="stylesheet" href="../styles/vant.min.css"/>
         <!--本页面内容的样式-->
         <link rel="stylesheet" href="./../styles/order.css" />
+        <link rel="stylesheet" href="./../styles/main.css" />
+        <style>
+            .orderDetail {
+                background: linear-gradient(180deg, #ffffff 0%, #ffffff 81%);
+                border-radius: 12px 12px 0px 0px;
+            }
+            .orderDetail .orderDetailTitle {
+                height: 59rem;
+                display: flex;
+                line-height: 60rem;
+                position: relative;
+                margin-left: 15rem;
+                margin-right: 10rem;
+                border-bottom: 1px solid #efefef;
+            }
+            #payDiv > li > img,span{
+                vertical-align: top;
+            }
+            #payDiv > li > span{
+                width: 50px;
+            }
+            .btnBottom > span{
+                width: 80px;
+                background: #fdc001;
+                border-radius: 30px;
+                font-size: 20px;
+                color: #505050;
+                text-align: center;
+            }
+
+        </style>
     </head>
     <body>
         <div id="order" class="app">
@@ -32,25 +63,101 @@
                     @load="getList"
                     >
                     <van-cell v-for="(order,index) in orderList" :key="index" class="item">
-                        <div class="timeStatus">
-                            <span>{{order.orderTime}}</span>
-                            <span>{{getStatus(order.status)}}</span>
-                            <!-- <span>正在派送</span> -->
-                        </div>
-                        <div class="dishList">
-                            <div v-for="(item,index) in order.orderDetails" :key="index" class="item">
-                                <span>{{item.name}}</span>
-                                <span>x{{item.number}}</span>
+                        <div @click="viewLoad(order)">
+                            <div class="timeStatus">
+                                <span>{{order.orderTime}}</span>
+                                <span>{{getStatus(order.status)}}</span>
+                                <!-- <span>正在派送</span> -->
+
+                            </div>
+                            <div class="dishList">
+                                <div v-for="(item,index) in order.orderDetails" :key="index" class="item">
+                                    <span>{{item.name}}</span>
+                                    <span>x{{item.number}}</span>
+                                </div>
                             </div>
                         </div>
                         <div class="result">
-                            <span>共{{order.sumNum}} 件商品,实付</span><span class="price">￥{{order.amount}}</span>
+                            <span>共{{order.sumNum}} 件商品,<span v-if="order.status == 1">未付款</span><span v-else-if="order.status == 5">取消付款</span><span v-else>实付</span></span><span class="price">￥{{order.amount}}</span>
                         </div>
                         <div class="btn" v-if="order.status === 4">
-                            <div class="btnAgain" @click="addOrderAgain(order)">再来一单</div>
+                            <div class="btnAgain" @click="reminderMethod(3,order.id)">再来一单</div>
+                        </div>
+                        <hr style="background: #2a2a2a">
+                        <div>
+                            &nbsp;
                         </div>
                     </van-cell>
                 </van-list>
+                <div id="main">
+                <van-popup v-model="orderDetailShow.show" position="bottom" :style="{height: '60%', overflow: 'hidden' }" class="item" :close-on-click-overlay="false">
+                    <div style="border-radius: 10px 10px 0px 0px; padding: 5px 15px 0px 15px;">
+                        <div class="orderDetailTitle">
+                            <span class="title" style="font-size: 20px;">订单详情</span>
+                            <span class="clear" @click="orderDetailShow.show = false" style="font-size: 20px;position: fixed; right: 10px;">
+                                <i class="el-icon-circle-close"></i>
+                            </span>
+                        </div>
+                        <div class="timeStatus">
+                            <div style="position: fixed; left: 10px">{{orderData.number}} {{getStatus(orderData.status)}}</div>
+                        </div>
+                        <br>
+                        <div style="overflow-x: hidden; height: 260px; background: #f3f3f3">
+                            <div v-for="(item,index) in orderData.orderDetails" :key="index" class="item" >
+                                <br>
+                                <div style="position: relative; left: 50px; bottom: 1px; font-size: 15px;">
+                                        商品名：{{item.name}}
+                                    <br>
+                                        数&nbsp;&nbsp;&nbsp;量：{{item.number}} 份
+                                </div>
+                                <br>
+                                <hr style="background: #8f8e8e; height: 1px">
+                            </div>
+                        </div>
+                        <div v-if="orderData.status === 1 || orderData.status === 4" class="dialogFlavor">
+                            <hr style="position: fixed;background: #8f8e8e; height: 1px; bottom: 120px; width: 90%">
+                            <div class="divContent" :style="{ height: '34px' }" style="text-align: center; position: fixed; bottom: 80px">
+
+                                <div id="payDiv">
+                                    <img src="./../images/wx.jpeg" width="33px" @click="payClick(0)">
+                                    <span :key="0" @click="payClick(0)" :class="{spanActive:orderDetailShow.code === 0}">
+                                    微&nbsp;&nbsp;&nbsp;信
+                                    </span>
+                                    &nbsp;
+                                    <img src="./../images/zfb.jpeg" width="33px" @click="payClick(1)">
+                                    <span :key="1" @click="payClick(1)" :class="{spanActive:orderDetailShow.code === 1}">
+                                    支付宝
+                                    </span>
+                                </div>
+
+                            </div>
+                            <hr style="position: fixed;background: #8f8e8e; height: 1px; bottom: 70px;width: 90%">
+                        </div>
+
+                        <div class="btn" v-if="orderData.status === 1">
+                            <div class="btnAgain" @click="reminderMethod(5, orderData.id)" style="position: fixed; bottom: 20px; left: 15px">取消订单</div>
+                            <div class="btnAgain" @click="reminderMethod(2, orderData.id)" style="position: fixed; bottom: 20px">付款</div>
+                        </div>
+                        <div class="btn" v-if="orderData.status === 4">
+                            <div class="btnAgain" @click="reminderMethod(3, orderData.id)" style="position: fixed; bottom: 20px;">再来一单</div>
+                        </div>
+                    </div>
+                </van-popup>
+                <van-dialog v-if="reminderDialog.code != ''" v-model="reminderDialog.show" :style="{ height: '200px' , width: '80%'}" :show-confirm-button="false" class="dialogFlavor" ref="flavorDialog">
+                    <div class="dialogTitle"> 提示 </div>
+                    <br>
+                    <div style="text-align: center; font-size: 20px">
+                        <span v-if="reminderDialog.code === 5">确定取消订单？</span>
+                        <span v-if="reminderDialog.code === 2">确定付款？</span>
+                        <span v-if="reminderDialog.code === 3">确定再来一单？</span>
+                    </div>
+                    <div class="btnBottom" style="position: fixed;text-align: center; padding: 0px 20px 20px 20px; vertical-align: bottom; bottom: 20px">
+                        <span @click="reminderDialog.show = false, reminderDialog.code = ''" style="position: fixed;" >取消</span>
+                        <span v-if="reminderDialog.code !== 3 " @click="payment()" style="position: fixed;right: 15px">确定</span>
+                        <span v-else @click="addOrderAgain(3)" style="position: fixed;right: 15px">确定</span>
+                    </div>
+                </van-dialog>
+                </div>
             </div>
             <div class="divNoData" v-else>
                 <div class="divContainer">
@@ -68,7 +175,10 @@
         <!-- 引入axios -->
         <script src="../../backend/plugins/axios/axios.min.js"></script>
         <script src="./../js/request.js"></script>
+        <script src="./../js/common.js"></script>
+        <script src="../../backend/api/order.js"></script>
         <script src="./../api/order.js"></script>
+        <script src="./../js/moment.js"></script>
         <script>
         new Vue({
             el:"#order",
@@ -78,9 +188,20 @@
                         page:1,
                         pageSize:5
                     },
+                    reminderDialog: {
+                        show: false,
+                        code: ''
+                    },
                     orderList:[],
+                    orderData:[],
                     loading:false,
-                    finished:false
+                    finished:false,
+                    orderDetailShow: {
+                        code: 0,
+                        id: '',
+                        show: false,
+                        status: 1
+                    }
                 }
             },
             computed:{},
@@ -99,6 +220,9 @@
                     }else{
                         history.go(-1)
                     }
+                },
+                imgPathConvert(path){
+                    return imgPath(path)
                 },
                 initData(){
                     this.getList()
@@ -130,14 +254,14 @@
                         this.$notify({ type:'warning', message:res.msg});
                     }
                 },
-                async addOrderAgain(order){
-                    const res = await orderAgainApi({id:order.id})
-                    if(res.code === 1){
-                        window.requestAnimationFrame(()=>{
-                            window.location.href= '/front/index.html'
+                async addOrderAgain(id) {
+                    const res = await orderAgainApi({id:this.orderDetailShow.id})
+                    if (res.code === 1) {
+                        window.requestAnimationFrame(() => {
+                            window.location.href = '/front/page/order.html'
                         })
-                    }else{
-                        this.$notify({ type:'warning', message:res.msg});
+                    } else {
+                        this.$notify({type: 'warning', message: res.msg});
                     }
                 },
                 getStatus(status){
@@ -158,9 +282,43 @@
                         case 5:
                             str =  '已取消'
                         break;
-
                     }
                     return str
+                },
+                viewLoad(data) {
+                    this.orderData = data;
+                    this.orderDetailShow.show = true;
+                },
+                payClick(item){
+                    this.orderDetailShow.code = item
+                    //强制刷新dialog的dom
+                    this.orderDetailShow.show = false
+                    this.orderDetailShow.show = true
+                },
+                payment() {
+                    const params = {
+                        status:this.orderDetailShow.status,
+                        checkoutTime: moment().format("YYYY-MM-DD hh:mm:ss"),
+                        id:this.orderDetailShow.id
+                    }
+                    editOrderDetail(params).then(res => {
+                        if (res.code === 1) {
+                            window.requestAnimationFrame(()=>{
+                                window.location.replace('/front/page/order.html')
+                            });
+                        } else {
+                            this.$message.error(res.msg || '操作失败')
+                        }
+                    }).catch(err => {
+                        this.$message.error('请求出错了：' + err)
+                    })
+
+                },
+                reminderMethod(code, id){
+                    this.reminderDialog.code = code;
+                    this.orderDetailShow.status = code;
+                    this.orderDetailShow.id = id;
+                    this.reminderDialog.show = true;
                 }
             }
         })

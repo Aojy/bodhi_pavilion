@@ -10,13 +10,13 @@ import java.util.Map;
 public interface DishService {
     boolean saveDish(DishDto dto);
 
-    Map<String, Object> getDishList(Integer page, Integer pageSize, String name);
+    Map<String, Object> getDishList(Map<String, Object> map);
 
     DishDto getDish(String id);
 
     boolean deleteDishByIds(String[] ids);
 
-    boolean updateDishStatus(String[] strings, Integer code);
+    boolean updateDishStatus(Map<String, Object> map);
 
     boolean updateDish(DishDto dto);
 

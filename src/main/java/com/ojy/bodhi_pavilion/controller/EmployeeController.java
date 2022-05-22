@@ -2,14 +2,16 @@ package com.ojy.bodhi_pavilion.controller;
 
 import com.ojy.bodhi_pavilion.pojo.Employee;
 import com.ojy.bodhi_pavilion.service.EmployeeService;
-import com.ojy.bodhi_pavilion.uitl.GetId;
-import com.ojy.bodhi_pavilion.uitl.MD5;
-import com.ojy.bodhi_pavilion.uitl.Result;
+import com.ojy.bodhi_pavilion.util.GetId;
+import com.ojy.bodhi_pavilion.util.MD5;
+import com.ojy.bodhi_pavilion.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/employee")
@@ -18,9 +20,16 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
+    /**
+     * 验证登陆
+     * @param emp
+     * @param session
+     * @return
+     */
     @PostMapping("/login")
     public Result toLogin(@RequestBody Employee emp, HttpSession session) {
         try {
+            session.setAttribute("loginFlag","admin");
             Employee employee = employeeService.login(emp.getUsername(), MD5.getMD5(emp.getPassword()));
             if (employee != null) {
                 if (employee.getStatus() == 1) {
@@ -41,16 +50,32 @@ public class EmployeeController {
         return Result.success(null);
     }
 
+    /**
+     * 获取所有员工账号数据
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public Result getEmployeeList(Integer page, Integer pageSize, String name) {
         try {
-            return Result.success(employeeService.queryEmployeeList(page, pageSize, name));
+            Map<String, Object> map = new HashMap<>();
+            map.put("start",(page - 1) * pageSize);
+            map.put("size", pageSize);
+            map.put("name", name);
+            return Result.success(employeeService.queryEmployeeList(map));
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("系统繁忙，请稍后重试...");
         }
     }
 
+    /**
+     * 根据id获取员工账号数据
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     public Result getEmployee(@PathVariable String id) {
         try {
@@ -61,6 +86,12 @@ public class EmployeeController {
         }
     }
 
+    /**
+     * 新增员工账号数据
+     * @param employee
+     * @param session
+     * @return
+     */
     @PostMapping
     public Result saveEmployee(@RequestBody Employee employee, HttpSession session) {
         try {
@@ -81,10 +112,17 @@ public class EmployeeController {
         }
     }
 
+    /**
+     * 修改员工账号数据
+     * @param employee
+     * @param session
+     * @return
+     */
     @PutMapping
-    public Result updateEmployee(@RequestBody Employee emp) {
+    public Result updateEmployee(@RequestBody Employee employee, HttpSession session) {
         try {
-            return Result.success(employeeService.updateEmployee(emp));
+            Employee emp = (Employee) session.getAttribute("emp");
+            return Result.success(employeeService.updateEmployee(employee, emp));
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("系统繁忙，请稍后重试...");

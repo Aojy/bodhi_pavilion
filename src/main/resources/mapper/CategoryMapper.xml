@@ -14,12 +14,7 @@
   <sql id="tbFieldList" >
     id, type, name, sort, create_time, update_time, create_user, update_user
   </sql>
-  <select id="selectById" resultMap="ResultMap" parameterType="java.lang.String" >
-    select 
-    <include refid="tbFieldList" />
-    from category
-    where id = #{id,jdbcType=BIGINT}
-  </select>
+
 
   <select id="selectByType" resultMap="ResultMap" parameterType="java.lang.Integer" >
     select
@@ -30,7 +25,8 @@
         type = #{type}
       </if>
     </where>
-    <if test="start != null and start != '' and size != null and size != ''">
+    order by update_time desc
+    <if test="start != null and size != null ">
       limit #{start}, #{size}
     </if>
   </select>
@@ -39,56 +35,47 @@
     select
     <include refid="tbFieldList" />
     from category
+    order by update_time desc
     limit #{start}, #{size}
   </select>
 
   <select id="selectTotal" resultType="int">
-    select count(id)
-    from category
+    select count(id) from category
   </select>
-  
+
+
   <delete id="deleteById" parameterType="java.lang.String" >
-    delete from category
-    where id = #{id,jdbcType=BIGINT}
+    delete from category where id = #{id}
   </delete>
+
+
   <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.Category" >
-    insert into category (id, type, name, 
-      sort, create_time, update_time, 
+    insert into category (id, type, name,sort, create_time, update_time,
       create_user, update_user)
-    values (#{id,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
-      #{sort,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT})
+    values (#{id}, #{type}, #{name,jdbcType=VARCHAR}, #{sort}, #{createTime},
+            #{updateTime}, #{createUser}, #{updateUser})
   </insert>
+
+
   <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.Category" >
     update category
     <set >
-      <if test="type != null and type !=''" >
-        type = #{type,jdbcType=INTEGER},
+      <if test="type != null" >
+        type = #{type},
       </if>
       <if test="name != null and name !=''" >
         name = #{name,jdbcType=VARCHAR},
       </if>
       <if test="sort != null and sort !=''" >
-        sort = #{sort,jdbcType=INTEGER},
+        sort = #{sort},
       </if>
-      <if test="updateTime != null and updateTime !=''" >
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      <if test="updateTime != null" >
+        update_time = #{updateTime},
       </if>
       <if test="updateUser != null and updateUser !=''" >
-        update_user = #{updateUser,jdbcType=BIGINT},
+        update_user = #{updateUser},
       </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateById" parameterType="com.ojy.bodhi_pavilion.pojo.Category" >
-    update category
-    set type = #{type,jdbcType=INTEGER},
-      name = #{name,jdbcType=VARCHAR},
-      sort = #{sort,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=BIGINT},
-      update_user = #{updateUser,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </update>
 </mapper>

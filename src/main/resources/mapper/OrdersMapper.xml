@@ -51,6 +51,15 @@
   </select>
 
   
+  <select id="selectById" resultMap="BaseResultMap" parameterType="map">
+    select
+    <include refid="tbFieldList"/>
+    from orders o
+    left join address_book ab
+    on ab.id = o.address_book_id
+    where o.id = #{id}
+  </select>
+
   <select id="selectOrdersByUserId" resultMap="BaseResultMap" parameterType="map">
     select
     <include refid="tbFieldList"/>
@@ -58,10 +67,10 @@
     left join address_book ab
     on ab.id = o.address_book_id
     where o.user_id = #{userId}
-    order by o.status desc,o.order_time desc
+    order by o.order_time desc, o.status asc
     limit #{start}, #{size}
   </select>
-  
+
   <select id="selectOrdersList" resultMap="BaseResultMap" parameterType="map">
     select
     <include refid="tbFieldList"/>
@@ -88,6 +97,8 @@
       #{checkoutTime,jdbcType=TIMESTAMP}, #{payMethod,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, 
       #{remark,jdbcType=VARCHAR})
   </insert>
+
+
   <update id="updateByIdSelective" parameterType="com.ojy.bodhi_pavilion.pojo.Orders" >
     update orders
     <set >

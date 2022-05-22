@@ -13,7 +13,7 @@ public interface OrdersMapper {
 
     int insert(Orders orders);
 
-    Orders selectById(String id);
+    OrdersDto selectById(String id);
 
     int updateByIdSelective(Orders orders);
 

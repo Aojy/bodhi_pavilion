@@ -16,9 +16,6 @@ public interface AddressBookMapper {
 
     int updateByIdSelective(AddressBook addressBook);
 
-    AddressBook selectDefaultAddressBookByUserId(String id);
-
-
     List<AddressBook> selectAddressBookByUserId(@Param("id") String id, @Param("flag") String flag);
 
     int updateDefaultFalse(String id);

@@ -11,8 +11,6 @@ import java.util.Map;
 @Mapper
 @Transactional
 public interface EmployeeMapper {
-    int deleteById(String id);
-
     int insert(Employee record);
 
     Employee selectById(String id);

@@ -14,11 +14,7 @@ public interface CategoryMapper {
 
     int insert(Category category);
 
-    Category selectById(String id);
-
     int updateByIdSelective(Category category);
-
-    int updateById(Category category);
 
     List<Category> selectCategoryList(Map<String, Object> map);
 

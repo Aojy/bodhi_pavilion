@@ -74,7 +74,7 @@
               size="small"
               class="blueBug"
               @click="addMemberHandle(scope.row.id)"
-              :class="{notAdmin:user !== 'admin'}"
+              :class="{notAdmin:user !== '1653104060277599936'}"
             >
               编辑
             </el-button>
@@ -83,7 +83,8 @@
               size="small"
               class="delBut non"
               @click="statusHandle(scope.row)"
-              v-if="user === 'admin'"
+              v-if="user === '1653104060277599936'"
+              v-show="scope.row.id !== '1653104060277599936'"
             >
               {{ scope.row.status == '1' ? '禁用' : '启用' }}
             </el-button>
@@ -127,7 +128,7 @@
         computed: {},
         created() {
           this.init()
-          this.user = JSON.parse(localStorage.getItem('userInfo')).username
+          this.user = JSON.parse(localStorage.getItem('userInfo')).id
         },
         mounted() {
         },

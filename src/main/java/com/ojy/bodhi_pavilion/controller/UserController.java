@@ -3,13 +3,12 @@ package com.ojy.bodhi_pavilion.controller;
 
 import com.ojy.bodhi_pavilion.pojo.User;
 import com.ojy.bodhi_pavilion.service.UserService;
-import com.ojy.bodhi_pavilion.uitl.GetId;
-import com.ojy.bodhi_pavilion.uitl.Result;
+import com.ojy.bodhi_pavilion.util.GetId;
+import com.ojy.bodhi_pavilion.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/user")
@@ -21,6 +20,7 @@ public class UserController {
     @PostMapping("/login")
     public Result login(@RequestBody User user, HttpSession session) {
         try {
+            session.setAttribute("loginFlag","user");
             User flag = userService.isUser(user.getPhone());
             if (flag == null) {
                 user.setId(GetId.getId());

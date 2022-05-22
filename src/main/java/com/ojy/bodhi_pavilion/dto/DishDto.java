@@ -11,8 +11,6 @@ public class DishDto extends Dish {
 
     private String categoryName;
 
-    private Integer copies;
-
     public List<DishFlavor> getFlavors() {
         return flavors;
     }
@@ -27,13 +25,5 @@ public class DishDto extends Dish {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
-    }
-
-    public Integer getCopies() {
-        return copies;
-    }
-
-    public void setCopies(Integer copies) {
-        this.copies = copies;
     }
 }

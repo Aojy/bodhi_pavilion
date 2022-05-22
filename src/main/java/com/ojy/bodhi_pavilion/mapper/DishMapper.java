@@ -14,11 +14,9 @@ import java.util.Map;
 public interface DishMapper {
     int insert(Dish dish);
 
-    DishDto selectById(Long id);
+    DishDto selectById(String id);
 
     int updateByIdSelective(Dish dish);
-
-    int updateById(Dish dish);
 
     List<DishDto> selectDishList(Map<String, Object> map);
 

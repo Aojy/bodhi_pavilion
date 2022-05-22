@@ -14,11 +14,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Autowired
     private ShoppingCartMapper shoppingCartMapper;
 
+    /**
+     * 查询对应购物车的商品数据
+     * @param id
+     * @return
+     */
     @Override
     public List<ShoppingCart> queryShoppingCartByUserId(String id) {
         return shoppingCartMapper.selectShoppingCartByUserId(id);
     }
 
+    /**
+     * 增加商品
+     * @param cart
+     * @return
+     */
     @Override
     public boolean addCart(ShoppingCart cart) {
         Integer count = shoppingCartMapper.selectShoppingCartByDishId(cart);
@@ -29,6 +39,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.insert(cart) > 0;
     }
 
+    /**
+     * 减少商品
+     * @param cart
+     * @return
+     */
     @Override
     public boolean subCart(ShoppingCart cart) {
         Integer count = shoppingCartMapper.selectShoppingCartByDishId(cart);
@@ -39,6 +54,11 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         return shoppingCartMapper.deleteCart(cart) > 0;
     }
 
+    /**
+     * 清空购物车
+     * @param id
+     * @return
+     */
     @Override
     public boolean cleanCart(String id) {
         return shoppingCartMapper.deleteByUserId(id) > 0;

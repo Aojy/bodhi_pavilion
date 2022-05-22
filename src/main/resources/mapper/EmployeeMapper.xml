@@ -16,16 +16,28 @@
     <result column="update_user" property="updateUser" jdbcType="BIGINT" />
   </resultMap>
   <sql id="tbFieldList" >
-    id, name, username, password, phone, sex, id_number, status, create_time, update_time, 
-    create_user, update_user
+    id, name, username, password, phone, sex, id_number, status,
+    create_time, update_time, create_user, update_user
   </sql>
+
+  <sql id="selectCondition">
+      /*  当条件成立时按条件模糊查询  */
+      <where>
+          <if test="name != null and name != ''">
+              name like '%' #{name} '%'
+          </if>
+      </where>
+  </sql>
+  
+  <!--根据id查询员工信息-->
   <select id="selectById" resultMap="EmpResultMap" parameterType="java.lang.String" >
     select 
     <include refid="tbFieldList" />
     from employee
-    where id = #{id,jdbcType=BIGINT}
+    where id = #{id}
   </select>
 
+  <!--判断对应账号和密码的员工信息是否存在-->
   <select id="selectEmployeeByAccountAndPassword" resultMap="EmpResultMap" parameterType="String">
     select
     <include refid="tbFieldList" />
@@ -34,57 +46,63 @@
     and password = #{password}
   </select>
 
+  <!--查询所有账号信息-->
   <select id="selectEmployeeList" resultMap="EmpResultMap" parameterType="map">
     select
     <include refid="tbFieldList" />
     from employee
-    <where>
-      <if test="name != null and name != ''">
-        name like '%' #{name} '%'
-      </if>
-    </where>
+    <include refid="selectCondition"/>
+    order by status desc, username asc
     limit #{start}, #{size}
   </select>
 
+  <!--查询记录总数-->
   <select id="selectTotalByCondition" parameterType="String" resultType="int">
     select count(id)
     from employee
-    <where>
-      <if test="name != null and name != ''">
-        name like '%' #{name} '%'
-      </if>
-    </where>
+    <include refid="selectCondition"/>
   </select>
-
-  <delete id="deleteById" parameterType="java.lang.String" >
-    delete from employee
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
+  
+  <!--新增员工账号数据-->
   <insert id="insert" parameterType="com.ojy.bodhi_pavilion.pojo.Employee" >
-    insert into employee (id, name, username, 
-      password, phone, sex, 
-      id_number, status, create_time, 
-      update_time, create_user, update_user
-      )
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{sex,jdbcType=VARCHAR}, 
-      #{idNumber,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{createUser,jdbcType=BIGINT}, #{updateUser,jdbcType=BIGINT}
-      )
+    insert into employee (id, name, username, password, phone, sex,
+      id_number, status, create_time, update_time, create_user, update_user)
+    values (#{id}, #{name}, #{username}, #{password}, #{phone}, #{sex}, #{idNumber},
+            #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
   </insert>
+  
+  <!--修改员工数据-->
   <update id="updateById" parameterType="com.ojy.bodhi_pavilion.pojo.Employee" >
     update employee
-    set name = #{name,jdbcType=VARCHAR},
-      username = #{username,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=VARCHAR},
-      sex = #{sex,jdbcType=VARCHAR},
-      id_number = #{idNumber,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_user = #{createUser,jdbcType=BIGINT},
-      update_user = #{updateUser,jdbcType=BIGINT}
-    where id = #{id,jdbcType=BIGINT}
+    <set>
+        <if test="name != null and name != ''">
+          name = #{name},
+        </if>
+        <if test="username != null and username != ''">
+          username = #{username},
+        </if>
+        <if test="password != null and password != ''">
+          password = #{password},
+        </if>
+        <if test="phone != null and phone != ''">
+          phone = #{phone},
+        </if>
+        <if test="sex != null and sex != ''">
+          sex = #{sex},
+        </if>
+        <if test="idNumber != null and idNumber != ''">
+          id_number = #{idNumber},
+        </if>
+        <if test="status != null">
+          status = #{status},
+        </if>
+        <if test="updateTime != null">
+          update_time = #{updateTime},
+        </if>
+        <if test="updateUser != null">
+          update_user = #{updateUser}
+        </if>
+    </set>
+    where id = #{id}
   </update>
 </mapper>
